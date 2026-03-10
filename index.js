@@ -20,12 +20,26 @@ function addListeners() {
             animaster().scale(block, 1000, 1.25);
         });
 
+    document.getElementById('moveAndHidePlay')
+        .addEventListener('click', function() {
+            const block = document.getElementById('moveAndHideBlock');
+            animaster().moveAndHide(block, 5000, { x: 100, y: 10 });
+        });
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function() {
             const block = document.getElementById('fadeOutBlock');
             animaster().fadeOut(block, 5000);
         });
-
+    document.getElementById('showAndHidePlay')
+        .addEventListener('click', function() {
+            const block = document.getElementById('showAndHideBlock');
+            animaster().showAndHide(block, 1000);
+        });
+    document.getElementById('heartBeatingPlay')
+        .addEventListener('click', function() {
+            const block = document.getElementById('heartBeatingBlock');
+            animaster().heartBeating(block);
+        });
 }
 
 function getTransform(translation, ratio) {
@@ -79,18 +93,22 @@ function animaster() {
         },
         moveAndHide(element, duration, translation) {
             this.move(element, 2 * duration / 5, translation)
-            this.fadeIn(element, 3 / 5 * duration)
+            setTimeout(() => {
+                this.fadeOut(element, 3 / 5 * duration)
+            }, 3 / 5 * duration);
         },
         showAndHide(element, duration) {
-            this.fadeOut(element, 1 / 3 * duration)
-            setTimeout(() => {}, 1 / 3 * duration)
             this.fadeIn(element, 1 / 3 * duration)
+            setTimeout(() => { this.fadeOut(element, 1 / 3 * duration) }, 2 / 3 * duration)
         },
         heartBeating(element) {
             setInterval(() => {
                 this.scale(element, 500, 1.4);
-                this.scale(element, 500, 5 / 7);
-            });
+                setTimeout(() => {
+                        this.scale(element, 500, 5 / 7);
+                    },
+                    500);
+            }, 1000);
         }
-    };
+    }
 }
