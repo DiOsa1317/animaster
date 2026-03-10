@@ -35,11 +35,16 @@ function addListeners() {
             const block = document.getElementById('showAndHideBlock');
             animaster().showAndHide(block, 1000);
         });
+    let heart = null;
     document.getElementById('heartBeatingPlay')
         .addEventListener('click', function() {
             const block = document.getElementById('heartBeatingBlock');
-            animaster().heartBeating(block);
+            heart = animaster().heartBeating(block);
         });
+    document.getElementById('heartBeatingStop')
+        .addEventListener('click', function() {
+            heart.stop();
+        })
 }
 
 function getTransform(translation, ratio) {
@@ -102,13 +107,19 @@ function animaster() {
             setTimeout(() => { this.fadeOut(element, 1 / 3 * duration) }, 2 / 3 * duration)
         },
         heartBeating(element) {
-            setInterval(() => {
+            let interval = setInterval(() => {
                 this.scale(element, 500, 1.4);
                 setTimeout(() => {
                         this.scale(element, 500, 5 / 7);
                     },
                     500);
             }, 1000);
+            return {
+                interval,
+                stop() {
+                    clearInterval(interval);
+                }
+            }
         }
     }
 }
