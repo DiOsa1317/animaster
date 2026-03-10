@@ -69,6 +69,20 @@ function addListeners() {
         .addEventListener('click', function() {
             heart.stop();
         })
+    document.getElementById('aaaPlay')
+        .addEventListener('click', function() {
+            const block = document.getElementById('aaaBlock');
+            const customAnimation = animaster()
+                .addMove(200, { x: 40, y: 40 })
+                .addScale(800, 1.3)
+                .addMove(200, { x: 80, y: 0 })
+                .addScale(800, 1)
+                .addMove(200, { x: 40, y: -40 })
+                .addScale(800, 0.7)
+                .addMove(200, { x: 0, y: 0 })
+                .addScale(800, 1);
+            customAnimation.play(block);
+        })
 }
 
 function getTransform(translation, ratio) {
@@ -222,7 +236,7 @@ function animaster() {
 
             steps.forEach(step => {
                 setTimeout(() => {
-                    switch(step.type) {
+                    switch (step.type) {
                         case 'move':
                             this.move(element, step.duration, step.translation);
                             break;
