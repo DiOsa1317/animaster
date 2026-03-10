@@ -76,6 +76,21 @@ function animaster() {
         scale(element, duration, ratio) {
             element.style.transitionDuration = `${duration}ms`;
             element.style.transform = getTransform(null, ratio);
+        },
+        moveAndHide(element, duration, translation) {
+            this.move(element, 2 * duration / 5, translation)
+            this.fadeIn(element, 3 / 5 * duration)
+        },
+        showAndHide(element, duration) {
+            this.fadeOut(element, 1 / 3 * duration)
+            setTimeout(() => {}, 1 / 3 * duration)
+            this.fadeIn(element, 1 / 3 * duration)
+        },
+        heartBeating(element) {
+            setInterval(() => {
+                this.scale(element, 500, 1.4);
+                this.scale(element, 500, 5 / 7);
+            });
         }
     };
 }
