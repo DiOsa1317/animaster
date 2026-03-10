@@ -2,10 +2,16 @@ addListeners();
 
 function addListeners() {
     console.log(animaster)
+    let fadeIn = null;
     document.getElementById('fadeInPlay')
         .addEventListener('click', function() {
             const block = document.getElementById('fadeInBlock');
-            animaster().fadeIn(block, 5000);
+            fadeIn = animaster().fadeIn(block, 5000);
+        });
+
+    document.getElementById('fadeInStop')
+        .addEventListener('click', function() {
+            fadeIn.stop();
         });
 
     document.getElementById('movePlay')
@@ -20,16 +26,30 @@ function addListeners() {
             animaster().scale(block, 1000, 1.25);
         });
 
+    let moveAndHide = null;
     document.getElementById('moveAndHidePlay')
         .addEventListener('click', function() {
             const block = document.getElementById('moveAndHideBlock');
-            animaster().moveAndHide(block, 5000, { x: 100, y: 10 });
+            moveAndHide = animaster().moveAndHide(block, 5000, { x: 100, y: 10 });
         });
+
+    document.getElementById('moveAndHideStop')
+        .addEventListener('click', function() {
+            moveAndHide.stop();
+        });
+
+    let fadeOut = null;
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function() {
             const block = document.getElementById('fadeOutBlock');
-            animaster().fadeOut(block, 5000);
+            fadeOut = animaster().fadeOut(block, 5000);
         });
+
+    document.getElementById('fadeOutStop')
+        .addEventListener('click', function() {
+            fadeOut.stop();
+        });
+
     document.getElementById('showAndHidePlay')
         .addEventListener('click', function() {
             const block = document.getElementById('showAndHideBlock');
@@ -59,6 +79,27 @@ function getTransform(translation, ratio) {
 }
 
 function animaster() {
+
+    function resetFadeIn(element) {
+        element.style.transitionDuration = null;
+        element.classList.remove('show');
+        element.classList.add('hide');
+    };
+
+    function resetFadeOut(element) {
+        element.style.transitionDuration = null;
+        element.classList.remove('hide');
+        element.classList.add('show');
+    };
+
+    function resetMoveAndHide(element) {
+        element.style.transitionDuration = null;
+        element.style.transform = null;
+        element.classList.remove('show');
+        element.classList.add('hide');
+    };
+
+
     return {
         /**
          * Функция, передвигающая элемент
@@ -80,11 +121,21 @@ function animaster() {
             element.style.transitionDuration = `${duration}ms`;
             element.classList.remove('hide');
             element.classList.add('show');
+            return {
+                stop() {
+                    resetFadeIn(element);
+                }
+            }
         },
         fadeOut(element, duration) {
             element.style.transitionDuration = `${duration}ms`;
             element.classList.remove('show');
             element.classList.add('hide');
+            return {
+                stop() {
+                    resetFadeOut(element);
+                }
+            }
         },
         /**
          * Функция, увеличивающая/уменьшающая элемент
@@ -101,6 +152,11 @@ function animaster() {
             setTimeout(() => {
                 this.fadeOut(element, 3 / 5 * duration)
             }, 3 / 5 * duration);
+            return {
+                stop() {
+                    resetMoveAndHide(element);
+                }
+            }
         },
         showAndHide(element, duration) {
             this.fadeIn(element, 1 / 3 * duration)
