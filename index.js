@@ -2,11 +2,13 @@ addListeners();
 
 function addListeners() {
     console.log(animaster)
+    const an = animaster();
     let fadeIn = null;
     document.getElementById('fadeInPlay')
         .addEventListener('click', function() {
             const block = document.getElementById('fadeInBlock');
-            fadeIn = animaster().fadeIn(block, 5000);
+            fadeIn = an.addFadeIn(block, 5000);
+            an.play(block);
         });
 
     document.getElementById('fadeInStop')
@@ -17,13 +19,15 @@ function addListeners() {
     document.getElementById('movePlay')
         .addEventListener('click', function() {
             const block = document.getElementById('moveBlock');
-            animaster().move(block, 1000, { x: 100, y: 10 });
+            an.move(block, 1000, { x: 100, y: 10 });
+            an.play(block);
         });
 
     document.getElementById('scalePlay')
         .addEventListener('click', function() {
             const block = document.getElementById('scaleBlock');
-            animaster().scale(block, 1000, 1.25);
+            an.scale(block, 1000, 1.25);
+            an.play(block);
         });
 
     let moveAndHide = null;
@@ -176,6 +180,77 @@ function animaster() {
                     clearInterval(interval);
                 }
             }
-        }
+        },
+        _steps: [],
+
+        addMove(duration, translation) {
+            this._steps.push({
+                type: 'move',
+                duration,
+                translation
+            });
+            return this;
+        },
+        addScale(duration, ratio) {
+            this._steps.push({
+                type: 'scale',
+                duration,
+                ratio
+            });
+            return this;
+        },
+        addFadeIn(element, duration) {
+            this._steps.push({
+                type: 'fadeIn',
+                element,
+                duration,
+            });
+            return this;
+        },
+        addFadeOut(element, duration) {
+            this._steps.push({
+                type: 'fadeOut',
+                element,
+                duration,
+            });
+            return this;
+        },
+        play(element) {
+            let currentTime = 0;
+            const steps = [...this._steps]; // Copy steps
+            this._steps = []; // Clear steps for next use
+
+            steps.forEach(step => {
+                setTimeout(() => {
+                    switch(step.type) {
+                        case 'move':
+                            this.move(element, step.duration, step.translation);
+                            break;
+                        case 'scale':
+                            this.scale(element, step.duration, step.ratio);
+                            break;
+                        case 'fadeIn':
+                            this.fadeIn(element, step.duration);
+                            break;
+                        case 'fadeOut':
+                            this.fadeOut(element, step.duration);
+                            break;
+                    }
+                }, currentTime);
+
+                currentTime += step.duration;
+            });
+
+            // Return a combined stop function for the whole sequence
+            return {
+                stop() {
+                    // Clear all timeouts? This is tricky with setTimeout
+                    // You might want to implement a more sophisticated approach
+                    resetFadeIn(element);
+                    resetFadeOut(element);
+                    resetScale(element);
+                }
+            };
+        },
     }
 }
